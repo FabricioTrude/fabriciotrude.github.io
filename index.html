@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/fruits.js" defer></script>
+    <script src="js/unlockables.js" defer></script>
+    <script src="js/scripts.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Snake</h1>
+    </header>
+    <main>
+      <div id="game">
+        <div id="left">
+          <h2>Fruits</h2>
+        </div>
+        <div id="middle">
+          <h2 id="points">Points: <span id="point">0</span></h2>
+          <div id="screen"></div>
+        </div>
+        <div id="right">
+          <p>Unlockables</p>
+          <div class="unlockables-ui">
+            <!-- <div class="unlock"></div> -->
+          </div>
+          <p>Boosts</p>
+          <div class="boosts-ui">
+            <div class="boost"></div>
+          </div>
+        </div>
+      </div>
+      <div id="bottom">
+        <h3>Stats</h3>
+      </div>
+      <div id="save">
+        <p>Game Saved!</p>
+      </div>
+    </main>
+    <div class="tooltip floating-tooltip"></div>
+  </body>
+</html>
