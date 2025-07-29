@@ -1,0 +1,24 @@
+Snake v0.01
+
+Added:
+    Features:
+        Points
+        Length (WIP)
+    Upgrades:
+        Unlockables (WIP)
+        Boosts (WIP)
+
+Snake v0.02
+
+Fixed:
+    Features:
+    Upgrades:
+        Unlockables not appeearing when reaching requirement
+    UI:
+        Screen centered
+Added:
+    Features:
+    UI:
+        Changelog! :D
+Removed:
+    Nothing... yet

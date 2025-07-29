@@ -184,14 +184,13 @@ function createUnlockableCheck(div) {
   const bougth = div.dataset.bougth === "true";
   if (bougth) return false;
   const unlocked = unlockables.find(u => u.id === div.id).unlocked;
-  console.log(unlocked)
   switch (div.dataset.requirementType) {
     case "points": {
-      if (requirementValue > player.points || (!unlocked && !bougth)) return false;
+      if (requirementValue > player.points && !unlocked) return false;
       else return true;
     }
     case "length": {
-      if (requirementValue > player.length || (!unlocked && !bougth)) return false;
+      if (requirementValue > player.length && !unlocked) return false;
       else return true;
     }
   }
@@ -269,6 +268,7 @@ function purchaseUnlockEffect(unlock) {
     switch (effect.object) {
       case "fruit":
         index = fruit.findIndex(f => f.id === unlock.id)
+        if(!index) console.log("Vixi! Deu ruim D:")
         fruit[index].unlocked = true;
         break;
 
@@ -337,8 +337,11 @@ function getTile(x, y) {
   return screen.querySelector(`.floor[data-x="${x}"][data-y="${y}"]`);
 }
 
-function screenStart() {
-  fruits.push(fruitGen());
+function screenUpdate() {
+  const cubes = document.querySelectorAll(".floor")
+  if (cubes){
+    cubes.forEach((element) => element.remove())
+  }
   for (let y = 0; y < gameHeight; y++) {
     const line = document.createElement("div");
     line.classList.add("line");
@@ -359,6 +362,11 @@ function screenStart() {
     line.dataset.y = y;
     screen.appendChild(line);
   }
+}
+
+function screenStart() {
+  fruits.push(fruitGen());
+  screenUpdate();
 }
 function fruitPos() {
   let x, y;
