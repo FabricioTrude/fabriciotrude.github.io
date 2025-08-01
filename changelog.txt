@@ -1,24 +1,48 @@
-Snake v0.01
+--------------------------------------------------
 
-Added:
-    Features:
-        Points
-        Length (WIP)
-    Upgrades:
-        Unlockables (WIP)
-        Boosts (WIP)
+                    Snake v0.03
 
-Snake v0.02
-
-Fixed:
-    Features:
-    Upgrades:
-        Unlockables not appeearing when reaching requirement
+#Fixed:
     UI:
-        Screen centered
-Added:
+        *Save and load system;
     Features:
+        *Starting Prices
+        *Player speed lol
+#Added:
     UI:
-        Changelog! :D
-Removed:
-    Nothing... yet
+        *Navigation Buttons... 0.0;
+        *Tabs!
+        *Changelog and Settings!
+        *Helvetica font baby!
+    Features:
+        *Boosts
+        *New Fruits!!!
+        *Ability to increase max fruits and max playable area!
+
+--------------------------------------------------
+
+                    Snake v0.02
+
+#Fixed:
+    UI:
+        *Screen centered;
+        *Unlockables not appeearing when reaching requirement;
+#Added:
+    UI:
+        *Changelog! :D (only for me sorry);
+#Removed:
+    *Nothing... yet;
+
+--------------------------------------------------
+
+                    Snake v0.01
+
+#Added:
+    Features:
+        *serpentine;
+        *Length (WIP);
+    Upgrades:
+        *Unlockables (WIP);
+        *Boosts (WIP);
+
+--------------------------------------------------

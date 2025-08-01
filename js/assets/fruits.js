@@ -1,0 +1,42 @@
+let fruit = [
+  {
+    id: "apple",
+    rarity: "common",
+    baseChance: 1,
+    value: 0.02,
+    maxFruit: 3,
+    unlocked: true,
+  },
+  {
+    id: "orange",
+    rarity: "common",
+    baseChance: 0.8,
+    value: 0.05,
+    maxFruit: 2,
+    unlocked: false,
+  },
+  {
+    id: "grape",
+    rarity: "common",
+    baseChance: 0.9,
+    value: 0.1,
+    maxFruit: 1,
+    unlocked: false,
+  },
+  {
+    id: "banana",
+    rarity: "common",
+    baseChance: 0.5,
+    value: 1.5,
+    maxFruit: 1,
+    unlocked: false,
+  },
+  {
+    id: "lime",
+    rarity: "common",
+    baseChance: 0.5,
+    value: 2,
+    maxFruit: 1,
+    unlocked: false,
+  },
+];
