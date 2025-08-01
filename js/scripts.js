@@ -34,6 +34,7 @@ let player = {
     right: "d",
     save: "f",
     stop: " ",
+    autoSave: true
   },
   fruits: [],
   keys: [],
@@ -352,9 +353,11 @@ function start() {
 }
 
 // Game
+
 setInterval(() => {
   playerMove();
 }, gameSpeed);
+
 setInterval(() => {
   timePlayed++;
 }, 1000);

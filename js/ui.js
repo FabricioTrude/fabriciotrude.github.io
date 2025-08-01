@@ -283,7 +283,7 @@ function initControlsForm() {
 
   // Undo button - clear all inputs
   undoBtn.addEventListener("click", () => {
-    tempCommands = {};
+    tempCommands = { ...player.commands };
     updateFormValues();
   });
 
@@ -305,6 +305,9 @@ function initControlsForm() {
         e.target.value = value.slice(0, 1);
         tempCommands[key] = e.target.value;
       }
+    } else if (e.target.type === "checkbox") {
+      const key = e.target.name;
+      tempCommands[key] = e.target.checked;
     }
   });
 
@@ -317,7 +320,7 @@ function initControlsForm() {
       }
       if (e.key === "Escape") {
         e.preventDefault();
-        tempCommands = {};
+        tempCommands = { ...player.commands };
         updateFormValues();
       }
     }
@@ -329,7 +332,7 @@ function initControlsForm() {
     let valid = true;
 
     inputs.forEach((input) => {
-      if (input.value && input.value.length !== 1) {
+      if (input.type === "text" && input.value && input.value.length !== 1) {
         valid = false;
         input.style.borderColor = "#d32f2f";
       } else {
@@ -340,33 +343,45 @@ function initControlsForm() {
     if (valid) {
       // Apply changes to player.commands
       inputs.forEach((input) => {
-        if (input.value) {
+        if (input.type === "text" && input.value) {
           player.commands[input.name] = input.value;
+        } else if (input.type === "checkbox") {
+          player.commands[input.name] = input.checked;
         }
       });
 
       tempCommands = { ...player.commands };
-      // Clear all inputs
+      // Clear only text inputs
       inputs.forEach((input) => {
-        input.value = "";
+        if (input.type === "text") {
+          input.value = "";
+        }
       });
       updateFormPlaceholders();
-      showSaveNotification(); // Show confirmation
+      saveGame(); // Show confirmation
     }
   }
 
   function updateFormPlaceholders() {
     const inputs = form.querySelectorAll("input");
     inputs.forEach((input) => {
-      input.placeholder = player.commands[input.name] || "";
+      if (input.type === "text") {
+        input.placeholder = player.commands[input.name] || "";
+      } else if (input.type === "checkbox") {
+        input.checked = player.commands[input.name] || false;
+      }
     });
   }
 
   function updateFormValues() {
     const inputs = form.querySelectorAll("input");
     inputs.forEach((input) => {
-      input.value = "";
-      input.style.borderColor = "#333";
+      if (input.type === "text") {
+        input.value = "";
+        input.style.borderColor = "#333";
+      } else if (input.type === "checkbox") {
+        input.checked = player.commands[input.name] || false;
+      }
     });
   }
 }

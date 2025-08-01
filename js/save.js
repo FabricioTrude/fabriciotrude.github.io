@@ -4,6 +4,7 @@ function saveGame() {
   // console.log("Fruits antes de salvar: ", fruits)
   // console.log("Quantidade de frutas: ", fruits.length)
   const gameData = {
+    commands: {...player.commands},
     fruits: [...fruits],
     fruit: [...fruit],
     gameWidth: gameWidth,
@@ -51,6 +52,6 @@ function hasSavedGame() {
   return localStorage.getItem("snake") !== null;
 }
 
-setInterval(() => {
-  // saveGame();
+setInterval(() => { 
+  if(player.commands.autoSave)saveGame();
 }, 30000);
