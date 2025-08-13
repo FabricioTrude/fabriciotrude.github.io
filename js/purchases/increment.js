@@ -14,3 +14,16 @@ function purchaseEffectIncrement(upgrade) {
     }
   }
 }
+function purchaseUpgradeIncrement(upgrade) {
+  const effect = upgrade.effect;
+  const list = upgrades[effect.upgrades];
+  const boost = list.find((el) => el.id === effect.property);
+  if (boost) {
+    boost.price.maxLevel += parseInt(boost.effect.value);
+    const boostDiv = document.querySelector(
+      `.boosts#${boost.id}`
+    );
+    boostDiv.dataset.maxLevel = boost.price.maxLevel
+    updateBoostTooltip(boostDiv, boost);
+  }
+}

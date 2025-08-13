@@ -1,0 +1,18 @@
+.floating-tooltip.tooltip {
+  text-align: center;
+  position: fixed;
+  z-index: 9999;
+  background: #222;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: normal;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  max-width: 250px;
+  opacity: 0;
+  .requirement {
+    color: #777;
+  }
+}

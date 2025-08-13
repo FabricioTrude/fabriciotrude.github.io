@@ -1,15 +1,14 @@
 // UI Functions
 function calculateCubeSize() {
-  screenWidth = screen.clientWidth;
-  screenHeight = screen.clientHeight;
-
-  const cubeSizeX = screenWidth / gameWidth;
-  const cubeSizeY = screenHeight / gameHeight;
-
-  cube_size = Math.max(
-    minCubeSize,
-    Math.min(Math.min(cubeSizeX, cubeSizeY), maxCubeSize)
-  );
+  const middle = document.getElementById("middle");
+  const screen = document.getElementById("screen");
+  const snakePage = document.querySelector(".snake");
+  if (!snakePage || snakePage.classList.contains("hidden")) return;
+  const screenWidth = middle.clientWidth * 0.9;
+  const screenHeight = middle.clientHeight * 0.6;
+  cube_size = Math.min(screenWidth / gameWidth, screenHeight / gameWidth);
+  screen.style.height = cube_size * gameWidth;
+  screen.style.width = cube_size * gameWidth;
 }
 
 function sizeAdjust() {
@@ -21,20 +20,20 @@ function sizeAdjust() {
 }
 
 function updateOverflowCounter() {
-  const container = document.querySelector(".unlockables-ui");
+  const container = document.querySelector(".unlockables-container");
   const unlocks = document.querySelectorAll(".unlockables");
 
   if (!container || unlocks.length === 0) return;
 
-  const size = 32;
+  const size = 48;
   const gap = 1;
-  let containerWidth = container.offsetWidth;
+  let containerWidth = container.clientWidth;
   let containerHeight = container.offsetHeight;
   let elPerRow = Math.floor(containerWidth / (size + gap));
   let visibleRows = Math.floor(containerHeight / size);
   let visibleElements = elPerRow * visibleRows;
   let overflowCount = Math.max(0, unlocks.length - visibleElements);
-  let existingCounter = document.querySelector(".unlock.counter");
+  let existingCounter = document.querySelector(".unlockables.counter");
   if (existingCounter) {
     existingCounter.classList.remove("counter");
     existingCounter.textContent = "";
@@ -50,7 +49,12 @@ function updateOverflowCounter() {
 }
 
 function initHoverListeners() {
-  const containers = [...document.querySelectorAll("#right>div")];
+  const containers = [
+    document.querySelector(".unlockables-ui"),
+    document.querySelector(".boosts-ui"),
+    document.querySelector(".fruits-ui"),
+  ];
+  const unlockablesContainer = document.querySelector(".unlockables-container")
   const floatingTooltip = document.querySelector(".floating-tooltip");
 
   for (let i = 0; i < containers.length; i++) {
@@ -63,43 +67,67 @@ function initHoverListeners() {
     container.removeEventListener("transitionend", handleTransitionEnd);
 
     function handleMouseOver(e) {
-      const target = e.target.closest(".has-tooltip");
+  const target = e.target.closest(".has-tooltip");
 
-      if (e.target.classList.contains("counter") && !counterActivated) {
-        clearTimeout(transitionTimeout);
-        const existingCounter = document.querySelector(".unlock.counter");
-        if (existingCounter) {
-          existingCounter.classList.remove("counter");
-          existingCounter.textContent = "";
-        }
-        container.style.height = "102px";
-        counterActivated = true;
-        return;
-      }
-
-      if (target) {
-        const tooltip = target.querySelector(".tooltip");
-        if (!tooltip) return;
-
-        floatingTooltip.innerHTML = tooltip.innerHTML;
-        floatingTooltip.style.opacity = "1";
-
-        const rect = target.getBoundingClientRect();
-        const tooltipRect = floatingTooltip.getBoundingClientRect();
-
-        let top = rect.top - tooltipRect.height - 8;
-        let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
-
-        // Protege contra bordas
-        left = Math.max(
-          4,
-          Math.min(left, window.innerWidth - tooltipRect.width - 4)
-        );
-
-        floatingTooltip.style.top = `${top}px`;
-        floatingTooltip.style.left = `${left}px`;
-      }
+  if (e.target.classList.contains("counter") && !counterActivated) {
+    clearTimeout(transitionTimeout);
+    const existingCounter = document.querySelector(".unlock.counter");
+    if (existingCounter) {
+      existingCounter.classList.remove("counter");
+      existingCounter.textContent = "";
     }
+    unlockablesContainer.style.height = "150px";
+    console.log(container.style.height);
+    counterActivated = true;
+    return;
+  }
+
+  if (target) {
+    const isBoost = target.classList.contains("boosts");
+    const isUnlockable = target.classList.contains("unlockables");
+    const isFruit = target.classList.contains("fruits");
+    const isDirectTarget = e.target === target;
+    const isChildOfTarget = target.contains(e.target);
+    
+    if (isDirectTarget || 
+        (isBoost && isChildOfTarget) || 
+        (isUnlockable && isChildOfTarget) ||
+        (isFruit && isChildOfTarget)) {
+      
+      const tooltip = target.querySelector(".tooltip");
+      if (!tooltip) return;
+
+      // Verificar se é uma fruta bloqueada
+      if (isFruit && target.classList.contains("blocked")) {
+        floatingTooltip.innerHTML = "???";
+      } else {
+        floatingTooltip.innerHTML = tooltip.innerHTML;
+      }
+      
+      floatingTooltip.style.opacity = "1";
+
+      const rect = target.getBoundingClientRect();
+      const tooltipRect = floatingTooltip.getBoundingClientRect();
+
+      let top = rect.top - tooltipRect.height - 8;
+      let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
+      if (top < 0) top = rect.bottom + 8;
+
+      // Protege contra bordas
+      left = Math.max(
+        4,
+        Math.min(left, window.innerWidth - tooltipRect.width - 4)
+      );
+
+      floatingTooltip.style.top = `${top}px`;
+      floatingTooltip.style.left = `${left}px`;
+    } else {
+      floatingTooltip.style.opacity = "0";
+    }
+  } else {
+    floatingTooltip.style.opacity = "0";
+  }
+}
 
     function handleMouseLeave(e) {
       clearTimeout(transitionTimeout);
@@ -107,7 +135,8 @@ function initHoverListeners() {
         transitionTimeout = setTimeout(() => {
           updateOverflowCounter();
         }, 1050);
-        container.style.height = "68px";
+        unlockablesContainer.style.height = "100px";
+        console.log(container.style.height);
       }
       floatingTooltip.style.opacity = "0";
     }
@@ -116,7 +145,7 @@ function initHoverListeners() {
       if (e.propertyName === "height" && i === 0) {
         setTimeout(() => {
           updateOverflowCounter();
-          if (container.style.height === "68px") counterActivated = false;
+          if (unlockablesContainer.style.height === "100px") counterActivated = false;
         }, 10);
       }
     }
@@ -131,6 +160,25 @@ function showSaveNotification() {
   const saveElement = document.createElement("div");
   saveElement.className = "save-popup";
   saveElement.innerText = "Game Saved!";
+  document.body.appendChild(saveElement);
+  saveElement.offsetHeight;
+  saveElement.classList.add("show");
+
+  setTimeout(() => {
+    saveElement.classList.remove("show");
+    saveElement.classList.add("hide");
+    setTimeout(() => {
+      if (saveElement.parentNode) {
+        saveElement.parentNode.removeChild(saveElement);
+      }
+    }, 500);
+  }, 2000);
+}
+
+function showDeleteNotification() {
+  const saveElement = document.createElement("div");
+  saveElement.className = "delete-popup";
+  saveElement.innerText = "Game Deleted!";
   document.body.appendChild(saveElement);
   saveElement.offsetHeight;
   saveElement.classList.add("show");
@@ -180,6 +228,14 @@ function startUi() {
     });
   });
 
+  // Revela os upgrades se algum ja foi desbloqueado
+  document.querySelectorAll(".snake > div > div").forEach((section) => {
+    if (!upgrades[section.id]) return;
+    upgrades[section.id].forEach((upgrade) => {
+      if (upgrade.unlocked === false) return;
+      section.classList.remove("hidden");
+    });
+  });
   // Initialize controls form
   initControlsForm();
 }
@@ -193,12 +249,13 @@ function parseChangelog(text) {
   lines.forEach((line) => {
     if (!line || line.startsWith("-")) return;
 
-    if (line.startsWith("Snake v")) {
+    if (line.startsWith("Snake v") || line.startsWith("Ophidic Synergism v")) {
       // Version
       currentVersionLI = document.createElement("li");
       currentVersionLI.classList.add("version");
       currentVersionLI.textContent = line;
-      currentVersionLI.id = line.replace("Snake", "");
+      currentVersionLI.id = line.replace("Snake", "");const versionMatch = line.match(/v([\d.]+)/);
+      currentVersionLI.id = versionMatch ? ` v${versionMatch[1]}` : line;
       const typeUL = document.createElement("ul");
       currentVersionLI.appendChild(typeUL);
       rootUL.appendChild(currentVersionLI);
@@ -274,8 +331,9 @@ function initControlsForm() {
   const form = document.getElementById("controls-form");
   const undoBtn = document.getElementById("undo-controls");
   const confirmBtn = document.getElementById("confirm-controls");
+  const deleteBtn = document.getElementById("delete-save");
 
-  if (!form || !undoBtn || !confirmBtn) return;
+  if (!form || !undoBtn || !confirmBtn || !deleteBtn) return;
 
   let tempCommands = { ...player.commands }; // Copia temporária
 
@@ -384,6 +442,42 @@ function initControlsForm() {
       }
     });
   }
+
+  // Delete button functionality
+  deleteBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const clickCount = parseInt(deleteBtn.dataset.clicked) || 0;
+
+    if (clickCount === 0) {
+      deleteBtn.style.fontSize = "14px";
+      deleteBtn.innerText = "Are you sure?";
+      deleteBtn.dataset.clicked = "1";
+      // deleteBtn.style.backgroundColor = "#d32f2f";
+
+      // Reset after 3 seconds if not clicked again
+      setTimeout(() => {
+        if (deleteBtn.dataset.clicked === "1") {
+          deleteBtn.style.fontSize = "16px";
+          deleteBtn.innerText = "Delete";
+          deleteBtn.dataset.clicked = "0";
+          deleteBtn.style.backgroundColor = "";
+        }
+      }, 3000);
+    } else if (clickCount === 1) {
+      // Actually delete the save
+      deleteSave();
+      deleteBtn.innerText = "Deleted!";
+      deleteBtn.dataset.clicked = "0";
+      deleteBtn.style.backgroundColor = "#4caf50";
+
+      // Reset button after 2 seconds
+      setTimeout(() => {
+        deleteBtn.style.fontSize = "16px";
+        deleteBtn.innerText = "Delete";
+        deleteBtn.style.backgroundColor = "";
+      }, 2000);
+    }
+  });
 }
 
 // Upgrades
@@ -394,17 +488,17 @@ function createUpgradeCheck(div) {
   switch (div.dataset.type) {
     case "unlockables": {
       level = div.dataset.level;
-      if (level>0) return false;
+      if (level > 0) return false;
       unlocked = unlockables.find((u) => u.id === div.id).unlocked;
       break;
     }
     case "boosts": {
-      unlocked = boosts[div.dataset.boostIndex].unlocked
+      unlocked = boosts[div.dataset.boostIndex].unlocked;
     }
   }
   switch (div.dataset.requirementType) {
-    case "serpentine": {
-      if (requirementValue > player.serpentine && !unlocked) return false;
+    case "scales": {
+      if (requirementValue > player.scales && !unlocked) return false;
       else return true;
     }
     case "length": {
@@ -416,23 +510,23 @@ function createUpgradeCheck(div) {
 
 function applyStyles(div, styles) {
   if (!styles) return;
-  if (div.dataset.type === "unlockables") {
-    Object.entries(styles).forEach(([property, value]) => {
-      div.style[property] = value;
-    });
-  } else if (div.dataset.type === "boosts") {
+  if (div.dataset.type === "boosts") {
     Object.entries(styles).forEach(([property, value]) => {
       div.children[0].style[property] = value;
+    });
+  } else {
+    Object.entries(styles).forEach(([property, value]) => {
+      div.style[property] = value;
     });
   }
 }
 
 function sortUnlocks() {
-  const container = document.querySelector(".unlockables-ui");
+  const container = document.querySelector(".unlockables-container");
   const unlocks = Array.from(container.querySelectorAll(".unlockables"));
 
   const typePriority = {
-    serpentine: 0,
+    scales: 0,
     length: 1,
     levels: 2,
   };
@@ -451,9 +545,22 @@ function sortUnlocks() {
   unlocks.forEach((div) => container.appendChild(div));
 }
 
+function createFruit(fruit) {
+  const existingFruit = document.querySelector(`.fruits#${fruit.id}`);
+  if (existingFruit) return;
+  const div = document.createElement("div");
+  div.dataset.type = "fruits";
+  if (!fruit.unlocked) div.classList.add("blocked");
+  div.id = fruit.id;
+  div.classList.add("fruits", "has-tooltip", "upgrade");
+  div.innerHTML = `<span class="tooltip">${fruit.name}</span>`;
+  fruitsUi.appendChild(div);
+  applyStyles(div, fruit.styles);
+}
+
 function createUnlock(unlock) {
-  const existingUnlock = document.getElementById(unlock.id);
-  if (existingUnlock) return
+  const existingUnlock = document.querySelector(`.unlockables#${unlock.id}`);
+  if (existingUnlock) return;
   const div = document.createElement("div");
   div.dataset.requirementType = unlock.requirement.type;
   div.dataset.requirementValue = unlock.requirement.value;
@@ -463,8 +570,9 @@ function createUnlock(unlock) {
   div.dataset.type = "unlockables";
   div.id = unlock.id;
   if (createUpgradeCheck(div) === false) return;
+  document.querySelector("#unlockables").classList.remove("hidden");
   unlock.unlocked = true;
-  div.classList.add("unlockables", "has-tooltip");
+  div.classList.add("unlockables", "has-tooltip", "upgrade");
   div.innerHTML = `<span class="tooltip">
     ${unlock.name}<br>
     ${unlock.description}<br>
@@ -478,46 +586,53 @@ function createUnlock(unlock) {
     e.preventDefault();
     if (
       div.classList.contains("purchasable") &&
-      !div.classList.contains("blocked")
+      !div.classList.contains("blocked") &&
+      !div.classList.contains("counter")
     )
-    purchaseUpgrade(div);
+      purchaseUpgrade(div);
   });
   sortUnlocks();
-  requirementsCheck()
+  requirementsCheck();
+}
+
+function updateBoostTooltip(div, boost) {
+  div.innerHTML = `
+  <div class="boost-icon"></div>
+  <div class="boost-title">${boost.name}</div>
+  <div class="boost-price">
+    <p class="boost-cost">${div.dataset.price}</p>
+    <p class="boost-type scales">${boost.price.type}</p>
+  </div>
+  <span class="tooltip">
+    ${boost.name} (${div.dataset.level}/${div.dataset.maxLevel})<br>
+    ${boost.description}<br>
+    <span class="requirement">
+      Requirement: ${boost.requirement.value} ${boost.requirement.type}
+    </span>
+  </span>`;
+  div.classList.add("boosts", "has-tooltip", "upgrade");
+  applyStyles(div, boost.styles);
 }
 
 function createBoost(boost) {
-  const existingBoost = document.getElementById(boost.id);
-  if (existingBoost) return
+  const existingBoost = document.querySelector(`.boosts#${boost.id}`);
+  if (existingBoost) return;
 
   const div = document.createElement("div");
   div.dataset.boostIndex = boosts.indexOf(boost);
   div.dataset.requirementValue = boost.requirement.value;
   div.dataset.requirementType = boost.requirement.type;
   div.dataset.price = boost.price.base ?? boost.price.values[0];
+  div.dataset.level = boost.level;
+  div.dataset.maxLevel = boost.price.maxLevel;
   div.dataset.type = "boosts";
-  div.classList.add("boosts", "has-tooltip");
+  div.classList.add("boosts", "has-tooltip", "upgrade");
   if (createUpgradeCheck(div) === false) return;
+  document.querySelector("#boosts").classList.remove("hidden");
   div.id = boost.id;
   boost.unlocked = true;
-
-  div.innerHTML = `
-  <div class="boost-icon"></div>
-  <div class="boost-title">${boost.name}</div>
-  <div class="boost-price">
-    <p class="boost-cost">${div.dataset.price}</p>
-    <p class="boost-type serpentine">${boost.price.type}</p>
-  </div>
-  <span class="tooltip">
-    ${boost.name}<br>
-    ${boost.description}<br>
-    <span class="requirement">
-      Requirement: ${boost.requirement.value} ${boost.requirement.type}
-    </span>
-  </span>
-`;
   boostsUi.appendChild(div);
-  applyStyles(div, boost.styles);
+  updateBoostTooltip(div, boosts[div.dataset.boostIndex]);
   div.addEventListener("click", (e) => {
     e.preventDefault();
     if (
@@ -526,10 +641,12 @@ function createBoost(boost) {
     )
       purchaseUpgrade(div);
   });
-  requirementsCheck()
 }
 
 function createUpgrades() {
+  fruits.forEach((fruit) => {
+    createFruit(fruit);
+  });
   unlockables.forEach((unlock) => {
     createUnlock(unlock);
   });
@@ -544,7 +661,7 @@ function purchaseUpgrade(div) {
   const upgradesList = upgrades[type];
   const upgrade = upgradesList.find((u) => u.id === id);
   if (!upgrade) return;
-  const effect = upgrade.effect
+  const effect = upgrade.effect;
   const price = parseFloat(div.dataset.price);
 
   // Checks if removes or not upgrade
@@ -552,10 +669,14 @@ function purchaseUpgrade(div) {
     case "unlockables": {
       upgrade.level = 1;
       div.remove();
+      // Update overflow counter immediately after removing unlockable
+      updateOverflowCounter(div);
       break;
     }
     case "boosts": {
       upgrade.level += 1;
+      div.dataset.level = upgrade.level;
+      updateBoostTooltip(div, boosts[div.dataset.boostIndex]);
       break;
     }
     default: {
@@ -566,9 +687,9 @@ function purchaseUpgrade(div) {
 
   // Changes its price / Discounts its price
   switch (upgrade.price.type) {
-    case "serpentine":
-      player.serpentine -= price;
-      document.querySelector("#point").innerText = player.serpentine.toFixed(2);
+    case "scales":
+      player.scales = player.scales.plus(-price);
+      scoreUpdate();
       break;
     case "lenght":
       player.lenght -= price;
@@ -583,7 +704,11 @@ function purchaseUpgrade(div) {
       purchaseEffectUnlock(upgrade);
       break;
     case "increment":
-      purchaseEffectIncrement(upgrade);
+      if (effect.upgrades) {
+        purchaseUpgradeIncrement(upgrade);
+      } else {
+        purchaseEffectIncrement(upgrade);
+      }
       break;
   }
   requirementsCheck();
@@ -595,16 +720,16 @@ function requirementsCheck() {
     const upgradeList = upgrades[type];
     const divs = [...document.querySelectorAll(`.${type}`)];
     upgradeList.forEach((upgrade) => {
-      if (upgrade.level>0) return;
-      switch(type){
-        case "unlockables":{
+      if (upgrade.level > 0) return;
+      switch (type) {
+        case "unlockables": {
           if (divs.some((div) => div.id === `${upgrade.id}`)) return;
-          createUnlock(upgrade)
+          createUnlock(upgrade);
           break;
         }
-        case "boosts":{
-          if (divs.some((div) => div.id === `${upgrade.id}`)) return
-          createBoost(upgrade)
+        case "boosts": {
+          if (divs.some((div) => div.id === `${upgrade.id}`)) return;
+          createBoost(upgrade);
         }
       }
     });
@@ -654,7 +779,7 @@ function requirementsCheck() {
         }
       } else {
         // Caso seja upgrade de compra única (ex: unlock)
-        if (upgrade.level>0) return;
+        if (upgrade.level > 0) return;
 
         const price = upgrade.price.value;
         if (price > player[priceType]) {

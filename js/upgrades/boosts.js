@@ -5,10 +5,10 @@ let boosts = [
     description: "Increases the maximum number of fruits on the screen", // required
     unlocked: false, // required
     level: 0, // required
-    requirement: { type: "serpentine", value: 0.2 }, // required
+    requirement: { type: "scales", value: 0.2 }, // required
     price: {
       // required
-      type: "serpentine",
+      type: "scales",
       model: { type: "exponential", factor: 2 }, // "fixed", "sequence", "exponential", "decreasing"
       // model:{type: "fixed"},
       base: 0.5, // preço = base * (factor^timesBought)
@@ -22,6 +22,7 @@ let boosts = [
       value: 1,
     },
     styles: {
+      backgroundImage: "url('assets/upgrades/boosts/max_fruits.png')",
       backgroundColor: "#f0f0f0",
       borderColor: "#cccccc",
     },
@@ -32,11 +33,11 @@ let boosts = [
     description: "Increases area you can play around!",
     unlocked: false,
     level: 0,
-    requirement: { type: "serpentine", value: 0.2 }, // 2
+    requirement: { type: "scales", value: 0.2 }, // 2
     price: {
-      type: "serpentine",
+      type: "scales",
       model: { type: "sequence" },
-      values: [2, 5],
+      values: [2, 5, 8, 15, 25],
       // model: { type: "fixed" },
       // base: 1,
       maxLevel: 2,
@@ -47,6 +48,7 @@ let boosts = [
       value: 1,
     },
     styles: {
+      backgroundImage: "url('assets/upgrades/boosts/screen_size.png')",
       backgroundColor: "#ff2e2eff",
       borderColor: "#222222ff",
     },

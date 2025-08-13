@@ -1,49 +1,24 @@
-.hidden {
-  display: none;
-}
-
 /* Save Effects */
 #save {
-    position: fixed;
-    bottom: -60px; /* Inicialmente fora da tela */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 50px;
-    background-color: #4caf50;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    border-radius: 8px 8px 0 0;
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
-  .save-popup {
-    position: fixed;
-    bottom: -60px; /* Inicialmente fora da tela */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 50px;
-    background-color: #4caf50;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    border-radius: 8px 8px 0 0;
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
-  /* Show and hide states for #save */
-  #save.show {
+  position: fixed;
+  bottom: -60px; /* Inicialmente fora da tela */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 50px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  &.show {
     bottom: 0; /* Posição final no chão da tela */
   }
-  #save.show::before {
+  &.show::before {
     content: "";
     position: absolute;
     top: 0;
@@ -59,15 +34,31 @@
     animation: shine 0.8s ease-out;
     pointer-events: none;
   }
-  #save.hide {
+  &.hide {
     bottom: -60px; /* Volta para fora da tela */
   }
-
-  /* Show and hide states for .save-popup */
-  .save-popup.show {
+}
+.save-popup {
+  position: fixed;
+  bottom: -60px; /* Inicialmente fora da tela */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 50px;
+  background-color: #4caf50;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  &.show {
     bottom: 0; /* Posição final no chão da tela */
   }
-  .save-popup.show::before {
+  &.show::before {
     content: "";
     position: absolute;
     top: 0;
@@ -83,21 +74,62 @@
     animation: shine 0.8s ease-out;
     pointer-events: none;
   }
-  .save-popup.hide {
+  &.hide {
     bottom: -60px; /* Volta para fora da tela */
   }
-
-  @keyframes shine {
-    0% {
-      width: 0%;
-      left: 0;
-    }
-    50% {
-      width: 100%;
-      left: 0;
-    }
-    100% {
-      width: 0%;
-      left: 100%;
-    }
+}
+.delete-popup {
+  position: fixed;
+  bottom: -60px; /* Inicialmente fora da tela */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 50px;
+  background-color: #dc381b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  &.show {
+    bottom: 0; /* Posição final no chão da tela */
   }
+  &.show::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: shine 0.8s ease-out;
+    pointer-events: none;
+  }
+  &.hide {
+    bottom: -60px; /* Volta para fora da tela */
+  }
+}
+
+@keyframes shine {
+  0% {
+    width: 0%;
+    left: 0;
+  }
+  50% {
+    width: 100%;
+    left: 0;
+  }
+  100% {
+    width: 0%;
+    left: 100%;
+  }
+}

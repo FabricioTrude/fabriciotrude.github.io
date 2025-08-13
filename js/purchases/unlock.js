@@ -2,9 +2,12 @@ function purchaseEffectUnlock(upgrade){
   const effect = upgrade.effect
     switch (effect.property) {
       case "fruit":
-        index = fruit.findIndex((f) => f.id === upgrade.id);
+        index = fruits.findIndex((f) => f.id === upgrade.id);
         if (!index) console.log("Vixi! Deu ruim D:");
-        fruit[index].unlocked = true;
+        fruits[index].unlocked = true;
+        document.querySelector(`.fruits.upgrade#${upgrade.id}`).classList.remove("blocked")
+        fruitGen();
         break;
     }
+    updateOverflowCounter();
 }

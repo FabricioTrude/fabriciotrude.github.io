@@ -3,16 +3,17 @@ const pages = [...document.querySelector("main").children];
 const mainSnake = document.querySelector(".snake");
 const screen = document.querySelector("#screen");
 const bottom = document.querySelector("#bottom");
-const unlocksUi = document.querySelector(".unlockables-ui");
+const fruitsUi = document.querySelector(".fruits-container");
+const unlocksUi = document.querySelector(".unlockables-container");
 const boostsUi = document.querySelector(".boosts-ui");
 const title = document.querySelector("#header-title");
-const serpentine = document.querySelector("#point");
+const scales = document.querySelector("#point");
 
 // Variables
 let gameWidth = 3; // quantidade cubos
 let gameHeight = 3; // quantidade cubos
 let minCubeSize = 4;
-let maxCubeSize = 160;
+let maxCubeSize = 64;
 let cube_size, screenWidth, screenHeight;
 let gameSpeed = 300;
 let isMoving = false; // Flag para controlar se a cobra está se movendo
@@ -34,19 +35,23 @@ let player = {
     right: "d",
     save: "f",
     stop: " ",
-    autoSave: true
+    autoSave: true,
   },
-  fruits: [],
+  move:{
+    dir: "stop",
+    side: "left",
+    stop: "stop",
+  },
+  fruit: [],
   keys: [],
-  dir: "stop",
   length: 0,
-  serpentine: 0,
+  scales: new Big(0.01),
   maxFruits: 1,
   eaten: false,
 };
 player.body = [{ ...player.head }];
 
-let fruits = [];
+let fruit = [];
 
 start();
 
@@ -74,32 +79,23 @@ function screenCreate() {
     line.dataset.y = y;
     screen.appendChild(line);
   }
-  const playerTile = getTile(player.head.x, player.head.y);
-  const head = document.createElement("div");
-  head.classList.add("content", "snake");
-  head.id = "head";
-  playerTile.dataset.player = "player";
-  playerTile.appendChild(head);
+  if (player.length === 0) {
+    const playerTile = getTile(player.head.x, player.head.y);
+    const head = document.createElement("div");
+    head.classList.add("content", "snake");
+    head.id = "head";
+    head.dataset.dir = player.move.dir;
+    head.dataset.side = player.move.side
+    head.dataset.length = player.length;
+    playerTile.dataset.player = "player";
+    playerTile.appendChild(head);
+  }
 }
-// function screenUpdate() {
-//   const playerTile = getTile(player.head.x, player.head.y);
-//   const head = document.createElement("div");
-//   head.classList.add("content", "snake");
-//   head.id = "head";
-//   playerTile.dataset.content = "player";
-//   playerTile.appendChild(head);
-
-//   const fruitTile = getTile(fruits[0].x, fruits[0].y);
-//   const fruit = document.createElement("div");
-//   fruit.classList.add("content", "fruit");
-//   fruit.id = fruits[0].type;
-//   fruitTile.appendChild(fruit);
-// }
 
 function screenStart() {
   screenCreate();
-  if (fruits.length === 0) fruitGen();
-  else fruits.forEach((fruit) => fruitCreate(fruit, "true"));
+  if (fruit.length === 0) fruitGen();
+  else fruit.forEach((currentFruit, index) => fruitCreate(currentFruit, index));
 }
 function fruitPos() {
   let x, y;
@@ -114,8 +110,8 @@ function fruitPos() {
     // Verifica se a posição é válida
     const tile = getTile(x, y);
     const isPlayerPosition = x === player.head.x && y === player.head.y;
-    const isFruitPosition = fruits.some(
-      (fruit) => fruit.x === x && fruit.y === y
+    const isFruitPosition = fruit.some(
+      (currentFruit) => currentFruit.x === x && currentFruit.y === y
     );
     const hasContent = tile && tile.querySelector(".content");
 
@@ -133,65 +129,67 @@ function fruitPos() {
 function fruitRarity() {
   return "common";
 }
-function fruitType(rarity) {
-  const validFruits = fruit.filter((f) => f.rarity === rarity && f.unlocked);
+function fruitType(rarity, ignoreId) {
+  const validFruits = fruits.filter((f) => f.rarity === rarity && f.unlocked);
   if (validFruits.length === 0) return "apple";
-  // Soma das chances válidas
+
   const onScreen = {};
-  for (let i = 0; i < fruits.length; i++) {
-    const id = fruits[i].type;
+  for (let i = 0; i < fruit.length; i++) {
+    const id = fruit[i].type;
+    if (id === ignoreId) continue; // ignora a fruta que será substituída
     onScreen[id] = (onScreen[id] || 0) + 1;
   }
-  while (true) {
-    const totalChance = validFruits.reduce((sum, f) => sum + f.baseChance, 0);
+
+  let attempts = 0;
+  while (attempts < 100) {
+    attempts++;
+
+    const totalChance = validFruits.reduce((sum, f) => sum + f.chance, 0);
     const rand = Math.random() * totalChance;
 
     let cumulative = 0;
     for (let i = 0; i < validFruits.length; i++) {
       const f = validFruits[i];
-      cumulative += f.baseChance;
+      cumulative += f.chance;
 
       if (rand < cumulative) {
         const current = onScreen[f.id] || 0;
-        if (current >= f.maxFruit) break;
-        return f.id;
+        if (current < f.maxFruit) {
+          return f.id;
+        } else {
+          break;
+        }
       }
     }
   }
+
+  return undefined;
 }
 function fruitValue(type) {
-  return fruit.find((f) => f.id === type).value;
+  return fruits.find((f) => f.id === type).value;
 }
-function fruitGen({ posX, posY } = {}) {
+function fruitGen({ posX, posY } = {}, replaceIndex) {
   // Verifica se já atingiu o limite máximo de frutas
-  if (fruits.length >= player.maxFruits) {
+  if (replaceIndex === undefined && fruit.length >= player.maxFruits) {
     console.log("Limite máximo de frutas atingido");
     return;
   }
 
-  // Verifica se ainda existem tipos de fruta disponíveis
   const rarity = fruitRarity();
-  const validFruits = fruit.filter((f) => f.rarity === rarity && f.unlocked);
 
+  const validFruits = fruits.filter((f) => f.rarity === rarity && f.unlocked);
   if (validFruits.length === 0) {
     console.log("Nenhuma fruta válida disponível");
     return;
   }
 
-  // Conta frutas na tela por tipo
-  const onScreen = {};
-  for (let i = 0; i < fruits.length; i++) {
-    const id = fruits[i].type;
-    onScreen[id] = (onScreen[id] || 0) + 1;
+  const ignoreId =
+    replaceIndex !== undefined ? fruit[replaceIndex]?.type : undefined;
+  const type = fruitType(rarity, ignoreId);
+  if (!type) {
+    console.log("Nenhum tipo de fruta válido retornado");
+    return;
   }
-
-  // Verifica se alguma fruta ainda pode ser criada
-  const availableFruits = validFruits.filter((f) => {
-    const current = onScreen[f.id] || 0;
-    return current < f.maxFruit;
-  });
-
-  if (availableFruits.length === 0) return;
 
   let x, y;
   if (posX !== undefined && posY !== undefined) {
@@ -199,12 +197,6 @@ function fruitGen({ posX, posY } = {}) {
     y = posY;
   } else {
     ({ x, y } = fruitPos());
-  }
-
-  const type = fruitType(rarity);
-  if (!type) {
-    console.log("Nenhum tipo de fruta válido retornado");
-    return;
   }
 
   const value = fruitValue(type);
@@ -216,64 +208,79 @@ function fruitGen({ posX, posY } = {}) {
     value,
   };
 
-  fruitCreate(newFruit);
-  if(fruits.length < player.maxFruits) fruitGen();
+  fruitCreate(newFruit, replaceIndex);
+  if (replaceIndex === undefined || fruit.length < player.maxFruits) fruitGen();
 }
 
-function fruitCreate(fruit, dontPush) {
-  if (dontPush !== "true") fruits.push(fruit);
-  const newTile = getTile(fruit.x, fruit.y);
+function fruitCreate(currentFruit, replaceIndex) {
+  if (replaceIndex === undefined) {
+    fruit.push(currentFruit);
+    replaceIndex = fruit.length - 1;
+  } else {
+    fruit[replaceIndex] = currentFruit;
+  }
+  const newTile = getTile(currentFruit.x, currentFruit.y);
   newTile.dataset.fruit = "fruit";
   const newFruit = document.createElement("div");
   newFruit.classList.add("content", "fruit");
-  newFruit.dataset.index = fruits.indexOf(fruit);
-  newFruit.id = fruit.type;
+  newFruit.dataset.index = replaceIndex;
+  newFruit.id = currentFruit.type;
   newTile.appendChild(newFruit);
 }
 function fruitCheck(x, y) {
   const oldFruitTile = getTile(x, y);
-  const oldFruit = fruits[oldFruitTile.children[0].dataset.index];
-  player.serpentine += oldFruit.value;
+  const oldFruitIndex = oldFruitTile.children[0].dataset.index;
+  const oldFruit = fruit[oldFruitIndex];
+  player.scales = player.scales.plus(oldFruit.value);
   oldFruitTile.dataset.fruit = "";
   oldFruitTile.dataset.index = "";
-  fruits.splice(oldFruit, 1);
   oldFruitTile.innerHTML = "";
-  fruitGen();
+  fruitGen({}, oldFruitIndex);
   scoreUpdate();
 }
 function scoreUpdate() {
-  serpentine.innerText = player.serpentine.toFixed(2);
+  scales.innerText = player.scales/*.toFixed(2)*/;
   requirementsCheck();
 }
 function playerMove() {
-  if (player.dir === "stop") return;
-  switch (player.dir) {
+  if (player.move.stop === "stop") return;
+  switch (player.move.dir) {
     case "up":
       if (player.head.y === 0) {
-        player.dir = "stop";
+        player.move.stop = "stop";
         return;
-      } else player.head.y--;
+      } else {
+        player.head.y--;
+      }
       break;
     case "down":
       if (player.head.y === gameHeight - 1) {
-        player.dir = "stop";
+        player.move.stop = "stop";
         return;
-      } else player.head.y++;
+      } else {
+        player.head.y++;
+      }
       break;
     case "left":
       if (player.head.x === 0) {
-        player.dir = "stop";
+        player.move.stop = "stop";
         return;
-      } else player.head.x--;
+      } else {
+        player.head.x--;
+      }
       break;
     case "right":
       if (player.head.x === gameWidth - 1) {
-        player.dir = "stop";
+        player.move.stop = "stop";
         return;
-      } else player.head.x++;
+      } else {
+        player.head.x++;
+      }
       break;
   }
-  if (getTile(player.head.x, player.head.y).dataset.fruit === "fruit") {
+  player.move.stop = "move";
+  currentTile = getTile(player.head.x, player.head.y);
+  if (currentTile && currentTile.dataset.fruit === "fruit") {
     fruitCheck(player.head.x, player.head.y);
   }
 
@@ -284,10 +291,12 @@ function updatePlayer() {
     const newHeadTile = getTile(player.head.x, player.head.y);
     newHead = document.createElement("div");
     newHead.classList.add("content", "snake");
+    newHead.dataset.dir = player.move.dir;
+    newHead.dataset.side = player.move.side
+    newHead.dataset.length = player.length;
     newHead.id = "head";
     newHeadTile.appendChild(newHead);
     newHeadTile.dataset.player = "player";
-
     const oldHeadTile = getTile(player.body[0].x, player.body[0].y);
     oldHeadTile.firstElementChild?.remove();
     oldHeadTile.dataset.player = "";
@@ -298,8 +307,8 @@ function updatePlayer() {
 
 // Events
 window.addEventListener("resize", () => {
-  sizeAdjust();
   setTimeout(() => {
+    sizeAdjust();
     updateOverflowCounter();
     initHoverListeners();
   }, 100);
@@ -307,30 +316,33 @@ window.addEventListener("resize", () => {
 window.addEventListener("orientationchange", sizeAdjust);
 window.addEventListener("keydown", (e) => {
   // Commands
+  player.move.stop="move"
   switch (e.key) {
     case player.commands.up:
-    case "ArrowUp":
+      case "ArrowUp":
       e.preventDefault();
-      player.dir = "up";
+      player.move.dir = "up";
       break;
     case player.commands.left:
     case "ArrowLeft":
       e.preventDefault();
-      player.dir = "left";
+      player.move.side = "left"
+      player.move.dir = "left";
       break;
     case player.commands.down:
     case "ArrowDown":
       e.preventDefault();
-      player.dir = "down";
+      player.move.dir = "down";
       break;
     case player.commands.right:
     case "ArrowRight":
       e.preventDefault();
-      player.dir = "right";
+      player.move.side = "right";
+      player.move.dir = "right";
       break;
     case player.commands.stop:
       e.preventDefault();
-      player.dir = "stop";
+      player.move.stop = "stop";
       break;
     case player.commands.save:
       e.preventDefault();

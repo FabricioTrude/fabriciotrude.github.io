@@ -1,5 +1,26 @@
 --------------------------------------------------
 
+                    Ophidic Synergism v0.04
+#Fixed:
+    UI:
+        *Save and load system AGAIN D:;
+    Features:
+        *Player color hehehe
+        *Revamped CSS system
+        *Lime fruits actually spawning lol
+#Added:
+    UI:
+        *Delete save button!
+        *Now upgrades tabs appears progressively!
+        *Boosts Level and Max Level on tooltips!
+        *A Few arts made by me! (such a tragedy.)
+    Features:
+        *Scales :0 (provisory name yet)
+        *Fruits Tab 0.0
+        *Game Notation (WIP)
+
+--------------------------------------------------
+
                     Snake v0.03
 #Fixed:
     UI:
@@ -38,7 +59,7 @@
 
 #Added:
     Features:
-        *serpentine;
+        *Points;
         *Length (WIP);
     Upgrades:
         *Unlockables (WIP);

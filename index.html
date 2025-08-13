@@ -3,18 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Snake</title>
+    <title>Ophidic Synergism</title>
+    <link rel="stylesheet" href="css/themes.css" />
     <link rel="stylesheet" href="css/screen.css" />
-    <link rel="stylesheet" href="css/navigation.css" />
+    <link rel="stylesheet" href="css/misc/effects.css" />
+    <link rel="stylesheet" href="css/misc/tooltips.css" />
+    <link rel="stylesheet" href="css/pages/snake.css" />
     <link rel="stylesheet" href="css/pages/changelog.css" />
     <link rel="stylesheet" href="css/pages/settings.css" />
-    <link rel="stylesheet" href="css/pages/snake.css" />
-    <link rel="stylesheet" href="css/misc/tooltips.css" />
-    <link rel="stylesheet" href="css/misc/effects.css" />
-    <script src="js/assets/fruits.js" defer></script>
-    <script src="js/assets/boosts.js" defer></script>
-    <script src="js/assets/unlockables.js" defer></script>
-    <script src="js/assets/upgrades.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/big.js/6.2.1/big.min.js"></script>
+    <script src="js/upgrades/fruits.js" defer></script>
+    <script src="js/upgrades/boosts.js" defer></script>
+    <script src="js/upgrades/unlockables.js" defer></script>
+    <script src="js/upgrades/upgrades.js" defer></script>
     <script src="js/purchases/unlock.js" defer></script>
     <script src="js/purchases/increment.js" defer></script>
     <script src="js/ui.js" defer></script>
@@ -28,26 +29,63 @@
     <main>
       <div class="snake">
         <div id="left">
+          <div id="fruits">
+            <div class="fruits-ui">
+              <p class="upgrade-titles">Fruits</p>
+              <div id="buttons">
+                <div class="button" id="fruits-tab">Fruits</div>
+                <div class="button blocked" id="milestones-tab">??? (WIP)</div>
+                <div class="button blocked" id="unknown">??? (WIP)</div>
+              </div>
+              <div class="fruits-container">
+                <!-- <div class="fruits" id="apple"></div> -->
+              </div>
+            </div>
+          </div>
         </div>
         <div id="middle">
-          <h2 id="serpentine">Serpentine Excrete: <span id="point">0</span></h2>
-          <div id="screen"></div>
-        </div>
-        <div id="right">
-          <p class="right-titles">Unlockables</p>
-          <div class="unlockables-ui">
-            <!-- <div class="unlockables"></div> -->
+          <div class="scales">
+            <h2 id="scales">Snake Scales:</h2>
+            <span id="point">0</span>
           </div>
-          <p class="right-titles">Boosts</p>
-          <div class="boosts-ui">
-            <!-- <div class="boosts">
-              <div class="boost-icon"></div>
-              <div class="boost-title">Teste Upgrade</div>
-              <div class="boost-price">
-                <p class="boost-cost">10</p>
-                <p class="boost-type serpentine">serpentine</p>
+          <div id="screen">
+            <!-- <div class="line">
+              <div class="floor">
+                <div class="content snake" id="head"></div>
+                <div class="content fruit" id="apple"></div>
               </div>
             </div> -->
+          </div>
+        </div>
+        <div id="right">
+          <div class="hidden" id="unlockables">
+            <div class="unlockables-ui">
+              <p class="upgrade-titles">Unlockables</p>
+              <div id="buttons">
+                <div class="button" id="unlockables-tab">Unlockables</div>
+                <div class="button blocked" id="unknown">??? (WIP)</div>
+              </div>
+              <div class="unlockables-container">
+                <!-- <div class="unlockables"></div> -->
+              </div>
+            </div>
+          </div>
+          <div class="hidden" id="boosts">
+            <p class="upgrade-titles">Boosts</p>
+            <div id="buttons">
+              <div class="button" id="boosts-tab">Boosts</div>
+              <div class="button blocked" id="unknown">??? (WIP)</div>
+            </div>
+            <div class="boosts-ui">
+              <!-- <div class="boosts">
+                <div class="boost-icon"></div>
+                <div class="boost-title">Teste Upgrade</div>
+                <div class="boost-price">
+                  <p class="boost-cost">10</p>
+                  <p class="boost-type scales">scales</p>
+                </div>
+              </div> -->
+            </div>
           </div>
         </div>
       </div>
@@ -60,27 +98,37 @@
             <h3>Control Settings</h3>
             <div class="control-group">
               <label for="move-up">Move Up:</label>
-              <input type="text" id="move-up" name="up" maxlength="1">
+              <input type="text" id="move-up" name="up" maxlength="1" />
             </div>
             <div class="control-group">
               <label for="move-down">Move Down:</label>
-              <input type="text" id="move-down" name="down" maxlength="1">
+              <input type="text" id="move-down" name="down" maxlength="1" />
             </div>
             <div class="control-group">
               <label for="move-left">Move Left:</label>
-              <input type="text" id="move-left" name="left" maxlength="1">
+              <input type="text" id="move-left" name="left" maxlength="1" />
             </div>
             <div class="control-group">
               <label for="move-right">Move Right:</label>
-              <input type="text" id="move-right" name="right" maxlength="1">
+              <input type="text" id="move-right" name="right" maxlength="1" />
             </div>
             <div class="control-group">
               <label for="save-key">Save Game:</label>
-              <input type="text" id="save-key" name="save" maxlength="1">
+              <input type="text" id="save-key" name="save" maxlength="1" />
             </div>
             <div class="control-group">
-              <label for="auto-sav">Auto save:</label>
-              <input type="checkbox" id="auto-sav" name="autoSave" checked>
+              <label for="auto-sav">Auto Save:</label>
+              <input type="checkbox" id="auto-sav" name="autoSave" checked />
+            </div>
+            <!-- <div class="control-group">
+              <label for="notation">Game Notation:</label>
+              <input type="search" id="notation" name="gameNotation" />
+            </div> -->
+            <div class="control-group">
+              <label for="delete-save">Delete Save?</label>
+              <button type="button" id="delete-save" data-clicked="0">
+                Delete
+              </button>
             </div>
             <div class="form-buttons">
               <button type="button" id="undo-controls">Undo</button>
@@ -90,13 +138,13 @@
         </div>
       </div>
     </main>
-      <div id="bottom">
-        <!-- <div class="page-button" id="main">Main</div>
+    <div id="bottom">
+      <!-- <div class="page-button" id="main">Main</div>
         <div class="page-button" id="settings">Settings</div> -->
-      </div>
-      <div id="save">
-        <p>Game Saved!</p>
-      </div>
+    </div>
+    <div id="save">
+      <p>Game Saved!</p>
+    </div>
     <div class="tooltip floating-tooltip"></div>
   </body>
 </html>

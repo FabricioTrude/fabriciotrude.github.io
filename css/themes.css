@@ -1,0 +1,51 @@
+:root{
+    /* Main Page */
+    --header-bg-color: #555;
+    --body-bg-color: #444;
+    --sides-bg-color: #3a3a3a;
+    --pagebutton-bg-color: #333;
+    --bottom-bg-color: #222;
+    --main-color: #fff;
+    --header-color: #fff;
+    --body-color: #fff;
+    --pagebutton-color: #fff;
+
+    --page-changelog-bg-color: #3a3a3a;
+    --page-changelogbox-bg-color: #555;
+
+    --page-settings-bg-color: #3a3a3a;
+    --page-settingsbox-bg-color: #555;
+    --page-settings-inputbutton-bg-color: #222;
+    /* Snake */
+    --floor-bg-color: #000;
+    --floor-border-color: #333;
+    --snake-1-color: #076013;
+
+    /* Upgrades */
+    --ui-counter-bg-color: #555;
+    --ui-boost-bg-color: #454545;
+    --ui-unlockables-bg-color: #111;
+    --ui-boosts-bg-color: #111;
+    --ui-fruits-header-bg-color: #1a1a1a;
+    --ui-fruits-buttom-bg-color: #222;
+    --ui-fruits-buttom-header-bg-color: #2a2a2a;
+    --ui-fruits-bg-color: #333;
+    --ui-fruits-upgrade-bg-color: #555;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  font-family: Helvetica;
+  box-sizing: border-box;
+  ul {
+    padding-inline-start: 2rem;
+  }
+  li {
+    list-style: none;
+  }
+  .hidden{
+    display: none !important;
+  }
+}

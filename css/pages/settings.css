@@ -9,12 +9,12 @@
   justify-content: center;
   align-items: center;
   border-radius: 2rem;
-  background-color: #333;
+  background-color: var(--page-settings-bg-color);
   #settings-box {
     width: 90%;
     height: 90%;
     padding: 1rem;
-    background-color: #555;
+    background-color: var(--page-settingsbox-bg-color);
     border-radius: 2rem 0 0 2rem;
     color: #fdfdfd;
     overflow: auto;
@@ -22,11 +22,11 @@
       width: 6px;
     }
     &::-webkit-scrollbar-thumb {
-      background-color: #333;
+      background-color: var(--page-settings-bg-color);
       border-radius: 3px;
     }
     &::-webkit-scrollbar-track {
-      background-color: #555;
+      background-color: var(--page-settingsbox-bg-color);
     }
   }
   #controls-form {
@@ -35,7 +35,7 @@
     h3 {
       text-align: center;
       margin-bottom: 2rem;
-      color: #fff;
+      color: var(--main-color);
     }
     .control-group {
       display: flex;
@@ -45,33 +45,37 @@
       label {
         margin-left: 2rem;
         font-size: 16px;
-        color: #fdfdfd;
+        color: var(--main-color);
         min-width: 120px;
+        &[for="save-key"] {
+          font-size: 17px;
+          padding: 2px 0;
+        }
       }
       input {
         padding: 4px 4px;
         font-size: 10px;
         margin-right: 2rem;
-        border: 1px solid #333;
+        border: 1px solid var(--page-settings-bg-color);
         border-radius: 4px;
-        background-color: #222;
-        color: #fff;
+        background-color: var(--page-settings-inputbutton-bg-color);
+        color: var(--main-color);
         font-size: 16px;
         text-align: center;
         width: calc(var(--vh, 1vh) * 5);
       }
       input:focus {
         outline: none;
-        border-color: #4caf50;
+        border-color: var(--main-color);
         box-shadow: 0 0 4px rgba(76, 175, 80, 0.3);
       }
-      input[type="checkbox"]{
+      input[type="checkbox"] {
         padding: 12px 12px;
         margin-right: 2rem;
-        border: 1px solid #333;
+        border: 1px solid var(--page-settings-bg-color);
         border-radius: 4px;
-        background-color: #222;
-        color: #fff;
+        background-color: var(--page-settings-inputbutton-bg-color);
+        color: var(--main-color);
         font-size: 16px;
         text-align: center;
         width: calc(var(--vh, 1vh) * 5);
@@ -79,27 +83,35 @@
         cursor: pointer;
         appearance: none;
         position: relative;
-        
         &:checked {
-          background-color: #222;
-          border-color: #333;
+          background-color: var(--page-settings-inputbutton-bg-color);
+          border-color: var(--page-settings-bg-color);
         }
-        
         &:checked::after {
           content: "✓";
           position: absolute;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          color: white;
+          color: var(--main-color);
           font-size: 16px;
           font-weight: bold;
         }
-        
         &:focus {
           outline: none;
-          border-color: #4caf50;
+          border-color: var(--main-color);
           box-shadow: 0 0 4px rgba(76, 175, 80, 0.3);
+        }
+      }
+      button {
+        &#delete-save {
+          padding: 10px 16px;
+          margin: 2px 10px 0 0;
+          background-color: #d32f2f;
+          color: white;
+          &:hover {
+            background-color: #b71c1c;
+          }
         }
       }
     }
@@ -108,26 +120,26 @@
       justify-content: center;
       gap: 1rem;
       margin-top: 2rem;
-      button {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.2s;
-        &#undo-controls {
-          background-color: #d32f2f;
-          color: white;
-          &:hover {
-            background-color: #b71c1c;
-          }
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s;
+      &#undo-controls {
+        background-color: #d32f2f;
+        color: white;
+        &:hover {
+          background-color: #b71c1c;
         }
-        &#confirm-controls {
-          background-color: #4caf50;
-          color: white;
-          &:hover {
-            background-color: #388e3c;
-          }
+      }
+      &#confirm-controls {
+        background-color: #4caf50;
+        color: white;
+        &:hover {
+          background-color: #388e3c;
         }
       }
     }
